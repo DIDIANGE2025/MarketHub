@@ -70,3 +70,50 @@ docker-compose up -d
 - Wireframes → docs/wireframes/
 - ADR Choix techniques → docs/adr/ADR-001.md
 - Journal IA → AI_JOURNAL.md
+## Protection du projet — Git & CI/CD
+
+### Structure des branches
+- `main` — production, toujours stable
+- `develop` — intégration quotidienne
+- `feature/nom` — chacun travaille ici
+
+### Règles de protection
+- Personne ne peut pousser directement sur `main`
+- Toute modification passe obligatoirement par une Pull Request
+- La validation d'Alphonse est requise avant tout merge
+- Les tests automatiques doivent passer avant le merge
+
+### Flux de travail quotidien
+1. Créer sa branche feature
+2. Coder et pousser sur sa branche
+3. Créer une Pull Request vers develop
+4. Pipeline CI/CD lance les tests automatiquement
+5. Alphonse review et valide
+6. Merge en sécurité
+
+### Pipeline CI/CD — GitHub Actions
+À chaque Pull Request le pipeline vérifie :
+- Tests backend PHPUnit
+- Tests frontend Vue.js
+- Build de l'application
+
+Si un test échoue → PR bloquée automatiquement
+
+### Commandes quotidiennes
+
+#### Démarrer sa journée
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/ma-tache
+```
+
+#### Sauvegarder son travail
+```bash
+git add .
+git commit -m "feat: description de ce que j'ai fait"
+git push origin feature/ma-tache
+```
+
+#### Créer une Pull Request
+Aller sur GitHub → Compare & pull request → Create pull request
