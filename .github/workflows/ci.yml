@@ -1,0 +1,60 @@
+name: CI MarketHub
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - develop
+
+jobs:
+  tests-backend:
+    name: Tests Backend Symfony
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Installer les dépendances
+        run: |
+          cd backend
+          composer install
+
+      - name: Lancer les tests
+        run: |
+          cd backend
+          php bin/phpunit
+
+  tests-frontend:
+    name: Tests Frontend Vue.js
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Installer les dépendances
+        run: |
+          cd frontend
+          npm install
+
+      - name: Lancer les tests
+        run: |
+          cd frontend
+          npm run test
+
+      - name: Vérifier le build
+        run: |
+          cd frontend
+          npm run build
