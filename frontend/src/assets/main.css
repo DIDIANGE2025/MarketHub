@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1600&q=80');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}

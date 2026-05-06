@@ -1,62 +1,60 @@
 <template>
-  <main class="max-w-6xl mx-auto px-6 py-10 flex gap-8">
-    
-    <!-- Sidebar filtres -->
-    <aside class="w-64 shrink-0">
-      <div class="border rounded-xl p-5 shadow-sm">
-        <h2 class="font-bold text-lg mb-4">Filtres</h2>
+  <main style="display:flex; gap:1.5rem; max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
 
-        <!-- Catégorie -->
-        <div class="mb-6">
-          <h3 class="font-semibold text-gray-700 mb-2">Catégorie</h3>
-          <div v-for="cat in categories" :key="cat" class="flex items-center gap-2 mb-1">
-            <input type="checkbox" :id="cat" :value="cat" v-model="selectedCategories" class="accent-indigo-600" />
-            <label :for="cat" class="text-gray-600 text-sm cursor-pointer">{{ cat }}</label>
-          </div>
-        </div>
+    <!-- SIDEBAR FILTRES -->
+    <aside style="width:220px; min-width:220px; background:rgba(255,255,255,0.92); border-radius:16px; padding:1.5rem; backdrop-filter:blur(6px); height:fit-content;">
+      <h2 style="font-size:1rem; font-weight:700; color:#111; margin-bottom:1.25rem; letter-spacing:-0.3px;">Filtres</h2>
 
-        <!-- Prix -->
-        <div class="mb-6">
-          <h3 class="font-semibold text-gray-700 mb-2">Prix maximum</h3>
-          <input type="range" min="10" max="200" v-model="maxPrice" class="w-full accent-indigo-600" />
-          <p class="text-sm text-gray-500 mt-1">Jusqu'à {{ maxPrice }} €</p>
-        </div>
+      <h3 style="font-size:0.8rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.75rem;">Catégorie</h3>
+      <div v-for="cat in categories" :key="cat" style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+        <input type="checkbox" :value="cat" v-model="selectedCategories" style="accent-color:#4F46E5;" />
+        <label style="font-size:0.88rem; color:#333; cursor:pointer;">{{ cat }}</label>
+      </div>
 
-        <!-- Note -->
-        <div>
-          <h3 class="font-semibold text-gray-700 mb-2">Note minimum</h3>
-          <div v-for="n in [4, 3, 2]" :key="n" class="flex items-center gap-2 mb-1">
-            <input type="radio" :id="`note${n}`" :value="n" v-model="minRating" class="accent-indigo-600" />
-            <label :for="`note${n}`" class="text-yellow-500 text-sm cursor-pointer">
-              {{ '★'.repeat(n) }}{{ '☆'.repeat(5 - n) }}
-            </label>
-          </div>
-        </div>
+      <hr style="border:none; border-top:1px solid #eee; margin:1.25rem 0;" />
+
+      <h3 style="font-size:0.8rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.75rem;">Prix maximum</h3>
+      <input type="range" min="10" max="200" v-model="maxPrice" style="width:100%; accent-color:#4F46E5;" />
+      <p style="font-size:0.82rem; color:#666; margin-top:0.4rem;">Jusqu'à {{ maxPrice }} €</p>
+
+      <hr style="border:none; border-top:1px solid #eee; margin:1.25rem 0;" />
+
+      <h3 style="font-size:0.8rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.75rem;">Note minimum</h3>
+      <div v-for="n in [4, 3, 2]" :key="n" style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+        <input type="radio" :id="`note${n}`" :value="n" v-model="minRating" style="accent-color:#4F46E5;" />
+        <label :for="`note${n}`" style="color:#f59e0b; font-size:0.85rem; cursor:pointer;">
+          {{ '★'.repeat(n) }}{{ '☆'.repeat(5 - n) }}
+        </label>
       </div>
     </aside>
 
-    <!-- Grille services -->
-    <section class="flex-1">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Catalogue</h1>
-        <p class="text-gray-500 text-sm">{{ filteredServices.length }} service(s) trouvé(s)</p>
+    <!-- GRILLE SERVICES -->
+    <section style="flex:1;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h1 style="font-size:1.6rem; font-weight:700; color:white; text-shadow:0 2px 10px rgba(0,0,0,0.5);">Catalogue</h1>
+        <span style="background:rgba(255,255,255,0.9); color:#4F46E5; font-size:0.82rem; font-weight:600; padding:0.4rem 1rem; border-radius:20px;">
+          {{ filteredServices.length }} service(s) trouvé(s)
+        </span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:1rem;">
         <div v-for="service in filteredServices" :key="service.id"
-          class="border rounded-xl p-5 shadow-sm hover:shadow-md transition cursor-pointer"
-          @click="$router.push(`/services/${service.id}`)">
-          <div class="bg-indigo-100 rounded-lg h-28 mb-3 flex items-center justify-center text-3xl">📦</div>
-          <h3 class="font-semibold text-gray-800 mb-1">{{ service.title }}</h3>
-          <p class="text-gray-500 text-sm mb-3">{{ service.description }}</p>
-          <div class="flex justify-between items-center">
-            <span class="text-indigo-600 font-bold">{{ service.price }} €</span>
-            <span class="text-yellow-500 text-sm">★★★★★</span>
+          @click="$router.push(`/services/${service.id}`)"
+          style="background:rgba(255,255,255,0.93); border-radius:16px; padding:1.25rem; cursor:pointer; transition:transform 0.2s; backdrop-filter:blur(4px);"
+          @mouseenter="e => e.currentTarget.style.transform='translateY(-4px)'"
+          @mouseleave="e => e.currentTarget.style.transform='translateY(0)'">
+          <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED); border-radius:10px; height:80px; margin-bottom:1rem; display:flex; align-items:center; justify-content:center; font-size:2rem;">📦</div>
+          <h3 style="font-weight:600; color:#111; font-size:0.95rem; margin-bottom:0.4rem;">{{ service.title }}</h3>
+          <p style="color:#666; font-size:0.82rem; margin-bottom:1rem; line-height:1.5;">{{ service.description }}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="background:#EEF2FF; color:#4F46E5; font-weight:700; padding:0.3rem 0.75rem; border-radius:20px; font-size:0.9rem;">{{ service.price }} €</span>
+            <span style="color:#f59e0b; font-size:0.85rem;">★★★★★</span>
           </div>
         </div>
       </div>
 
-      <p v-if="filteredServices.length === 0" class="text-gray-400 text-center py-20">
+      <p v-if="filteredServices.length === 0"
+        style="background:rgba(255,255,255,0.85); border-radius:14px; padding:3rem; text-align:center; color:#666; margin-top:1rem; backdrop-filter:blur(4px);">
         Aucun service ne correspond à vos filtres.
       </p>
     </section>
