@@ -6,28 +6,55 @@
     </RouterLink>
 
     <div style="display:flex; gap:1rem; align-items:center;">
-      <RouterLink to="/catalogue" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px; transition:background 0.2s;"
+      <RouterLink to="/catalogue" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px;"
         @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
         @mouseleave="e => e.currentTarget.style.background='transparent'">
         Catalogue
       </RouterLink>
 
-      <RouterLink to="/dashboard" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px; transition:background 0.2s;"
-        @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
-        @mouseleave="e => e.currentTarget.style.background='transparent'">
-        Mon espace
-      </RouterLink>
+      <!-- Si connecté -->
+      <template v-if="isLoggedIn">
+        <RouterLink to="/dashboard" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px;"
+          @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
+          @mouseleave="e => e.currentTarget.style.background='transparent'">
+          Mon espace
+        </RouterLink>
 
-      <RouterLink to="/login" style="background:white; color:#111; text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px; transition:opacity 0.2s;"
-        @mouseenter="e => e.currentTarget.style.opacity='0.85'"
-        @mouseleave="e => e.currentTarget.style.opacity='1'">
-        Connexion
-      </RouterLink>
+        <button @click="handleLogout"
+          style="background:#ef4444; color:white; border:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px; cursor:pointer; transition:opacity 0.2s;"
+          @mouseenter="e => e.currentTarget.style.opacity='0.85'"
+          @mouseleave="e => e.currentTarget.style.opacity='1'">
+          Déconnexion
+        </button>
+      </template>
+
+      <!-- Si non connecté -->
+      <template v-else>
+        <RouterLink to="/login" style="background:white; color:#111; text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px;"
+          @mouseenter="e => e.currentTarget.style.opacity='0.85'"
+          @mouseleave="e => e.currentTarget.style.opacity='1'">
+          Connexion
+        </RouterLink>
+      </template>
     </div>
 
   </nav>
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
+const isLoggedIn = ref(false)
+
+onMounted(() => {
+  isLoggedIn.value = !!localStorage.getItem('token')
+})
+
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  isLoggedIn.value = false
+  router.push('/login')
+}
 </script>

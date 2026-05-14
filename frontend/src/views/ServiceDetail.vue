@@ -1,57 +1,68 @@
 <template>
-  <main class="max-w-5xl mx-auto px-6 py-10">
-    <div v-if="service" class="flex gap-10">
-      
+  <main style="max-width:1100px; margin:0 auto; padding:2.5rem 1.5rem;">
+
+    <div v-if="service" style="display:flex; gap:2rem; align-items:flex-start;">
+
       <!-- Colonne gauche -->
-      <div class="flex-1">
-        <div class="bg-indigo-100 rounded-2xl h-56 flex items-center justify-center text-6xl mb-6">📦</div>
-        <h1 class="text-3xl font-bold mb-2">{{ service.title }}</h1>
-        <div class="flex items-center gap-3 mb-4">
-          <span class="text-yellow-500">★★★★★</span>
-          <span class="text-gray-400 text-sm">(24 avis)</span>
+      <div style="flex:1;">
+        <div style="background:linear-gradient(135deg,#4F46E5,#7C3AED); border-radius:20px; height:220px; display:flex; align-items:center; justify-content:center; font-size:5rem; margin-bottom:1.5rem;">📦</div>
+
+        <div style="background:rgba(255,255,255,0.93); border-radius:16px; padding:1.5rem; backdrop-filter:blur(4px); margin-bottom:1rem;">
+          <h1 style="font-size:1.8rem; font-weight:700; color:#111; margin-bottom:0.5rem;">{{ service.title }}</h1>
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+            <span style="color:#f59e0b; font-size:1rem;">★★★★★</span>
+            <span style="color:#888; font-size:0.85rem;">(24 avis)</span>
+            <span style="background:#EEF2FF; color:#4F46E5; font-size:0.78rem; font-weight:600; padding:0.2rem 0.6rem; border-radius:20px;">Vendeur vérifié</span>
+          </div>
+          <p style="color:#555; line-height:1.7; font-size:0.95rem;">{{ service.description }}</p>
         </div>
-        <p class="text-gray-600 leading-relaxed mb-8">{{ service.description }}</p>
 
         <!-- Avis -->
-        <h2 class="text-xl font-bold mb-4">Avis clients</h2>
-        <div class="space-y-4">
-          <div v-for="review in mockReviews" :key="review.id"
-            class="border rounded-xl p-4">
-            <div class="flex justify-between mb-1">
-              <span class="font-semibold text-gray-800">{{ review.author }}</span>
-              <span class="text-yellow-500">★★★★★</span>
+        <div style="background:rgba(255,255,255,0.93); border-radius:16px; padding:1.5rem; backdrop-filter:blur(4px);">
+          <h2 style="font-size:1.1rem; font-weight:700; color:#111; margin-bottom:1rem;">Avis clients</h2>
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div v-for="review in mockReviews" :key="review.id"
+              style="background:#f9fafb; border-radius:12px; padding:1rem;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+                <span style="font-weight:600; color:#111; font-size:0.9rem;">{{ review.author }}</span>
+                <span style="color:#f59e0b; font-size:0.85rem;">★★★★★</span>
+              </div>
+              <p style="color:#666; font-size:0.85rem; line-height:1.5;">{{ review.comment }}</p>
             </div>
-            <p class="text-gray-500 text-sm">{{ review.comment }}</p>
           </div>
         </div>
       </div>
 
-      <!-- Carte commande sticky -->
-      <aside class="w-72 shrink-0">
-        <div class="border rounded-2xl p-6 shadow-md sticky top-6">
-          <p class="text-3xl font-bold text-indigo-600 mb-1">{{ service.price }} €</p>
-          <p class="text-gray-500 text-sm mb-6">Paiement unique · Livraison 3-5 jours</p>
+      <!-- Carte commande -->
+      <aside style="width:280px; min-width:280px; position:sticky; top:6rem;">
+        <div style="background:rgba(255,255,255,0.95); border-radius:20px; padding:1.5rem; backdrop-filter:blur(8px);">
+          <p style="font-size:2rem; font-weight:800; color:#4F46E5; margin-bottom:0.25rem;">{{ service.price }} €</p>
+          <p style="color:#888; font-size:0.82rem; margin-bottom:1.5rem;">Paiement unique · Livraison 3-5 jours</p>
 
           <button @click="handleOrder"
-            class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mb-3">
+            style="width:100%; background:linear-gradient(135deg,#4F46E5,#7C3AED); color:white; border:none; padding:0.9rem; border-radius:12px; font-size:0.95rem; font-weight:600; cursor:pointer; margin-bottom:0.75rem;">
             Commander maintenant
           </button>
 
           <button
-            class="w-full border border-indigo-600 text-indigo-600 py-3 rounded-xl font-semibold hover:bg-indigo-50 transition">
+            style="width:100%; background:white; color:#4F46E5; border:2px solid #4F46E5; padding:0.9rem; border-radius:12px; font-size:0.95rem; font-weight:600; cursor:pointer;">
             Contacter le vendeur
           </button>
 
-          <div class="mt-6 space-y-2 text-sm text-gray-500">
-            <p>✅ Paiement sécurisé</p>
-            <p>✅ Remboursement sous 7 jours</p>
-            <p>✅ Support inclus</p>
+          <div style="margin-top:1.25rem; display:flex; flex-direction:column; gap:0.5rem;">
+            <p style="font-size:0.82rem; color:#555;">✅ Paiement sécurisé</p>
+            <p style="font-size:0.82rem; color:#555;">✅ Remboursement sous 7 jours</p>
+            <p style="font-size:0.82rem; color:#555;">✅ Support inclus</p>
           </div>
         </div>
       </aside>
+
     </div>
 
-    <p v-else class="text-gray-400 text-center py-20">Service introuvable.</p>
+    <p v-else style="background:rgba(255,255,255,0.85); border-radius:14px; padding:3rem; text-align:center; color:#666;">
+      Service introuvable.
+    </p>
+
   </main>
 </template>
 
