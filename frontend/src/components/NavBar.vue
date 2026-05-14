@@ -12,32 +12,24 @@
         Catalogue
       </RouterLink>
 
-      <!-- Si connecté -->
       <template v-if="isLoggedIn">
         <RouterLink to="/dashboard" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px;"
           @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
           @mouseleave="e => e.currentTarget.style.background='transparent'">
           Mon espace
         </RouterLink>
-
         <button @click="handleLogout"
-          style="background:#ef4444; color:white; border:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px; cursor:pointer; transition:opacity 0.2s;"
-          @mouseenter="e => e.currentTarget.style.opacity='0.85'"
-          @mouseleave="e => e.currentTarget.style.opacity='1'">
+          style="background:#ef4444; color:white; border:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px; cursor:pointer;">
           Déconnexion
         </button>
       </template>
 
-      <!-- Si non connecté -->
       <template v-else>
-        <RouterLink to="/login" style="background:white; color:#111; text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px;"
-          @mouseenter="e => e.currentTarget.style.opacity='0.85'"
-          @mouseleave="e => e.currentTarget.style.opacity='1'">
+        <RouterLink to="/login" style="background:white; color:#111; text-decoration:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px;">
           Connexion
         </RouterLink>
       </template>
     </div>
-
   </nav>
 </template>
 
@@ -48,8 +40,16 @@ import { RouterLink, useRouter } from 'vue-router'
 const router = useRouter()
 const isLoggedIn = ref(false)
 
-onMounted(() => {
+const checkAuth = () => {
   isLoggedIn.value = !!localStorage.getItem('token')
+}
+
+onMounted(() => {
+  checkAuth()
+})
+
+router.afterEach(() => {
+  checkAuth()
 })
 
 const handleLogout = () => {
