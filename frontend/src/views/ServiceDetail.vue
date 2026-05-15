@@ -44,7 +44,7 @@
             Commander maintenant
           </button>
 
-          <button
+          <button @click="router.push(`/chat?vendeur=${service?.seller?.username || 'Vendeur'}`)"
             style="width:100%; background:white; color:#4F46E5; border:2px solid #4F46E5; padding:0.9rem; border-radius:12px; font-size:0.95rem; font-weight:600; cursor:pointer;">
             Contacter le vendeur
           </button>

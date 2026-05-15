@@ -1,9 +1,12 @@
 <template>
   <div style="max-width:700px; margin:2rem auto; padding:1.5rem;">
     
-    <h1 style="color:white; font-size:1.5rem; font-weight:700; margin-bottom:1.5rem; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
+    <h1 style="color:white; font-size:1.5rem; font-weight:700; margin-bottom:0.5rem; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
       💬 Messagerie temps réel
     </h1>
+    <p v-if="vendeur" style="color:rgba(255,255,255,0.8); font-size:0.9rem; margin-bottom:1.5rem;">
+      Conversation avec <strong>{{ vendeur }}</strong>
+    </p>
 
     <!-- Fenêtre messages -->
     <div ref="messagesBox" style="background:rgba(255,255,255,0.93); border-radius:16px; padding:1.25rem; height:400px; overflow-y:auto; margin-bottom:1rem; display:flex; flex-direction:column; gap:0.75rem;">
@@ -11,7 +14,7 @@
         En attente de messages...
       </div>
       <div v-for="(msg, i) in messages" :key="i"
-        :style="msg.type === 'sent' ? 'align-self:flex-end; background:linear-gradient(135deg,#4F46E5,#7C3AED); color:white; padding:0.65rem 1rem; border-radius:16px 16px 4px 16px; max-width:80%; font-size:0.9rem;' : 'align-self:flex-start; background:#f3f4f6; color:#111; padding:0.65rem 1rem; border-radius:16px 16px 16px 4px; max-width:80%; font-size:0.9rem;'">
+        :style="msg.type === 'sent' ? 'align-self:flex-end; background:linear-gradient(135deg,#4F46E5,#7C3AED); color:white; padding:0.65rem 1rem; border-radius:16px 16px 4px 16px; max-width:80%; font-size:0.9rem;' : msg.type === 'system' ? 'align-self:center; background:#f3f4f6; color:#888; padding:0.4rem 0.75rem; border-radius:20px; font-size:0.8rem;' : 'align-self:flex-start; background:#f3f4f6; color:#111; padding:0.65rem 1rem; border-radius:16px 16px 16px 4px; max-width:80%; font-size:0.9rem;'">
         {{ msg.text }}
       </div>
     </div>
@@ -42,7 +45,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
+const vendeur = ref(route.query.vendeur as string || 'Vendeur')
 const messages = ref<{text: string, type: string}[]>([])
 const newMessage = ref('')
 const connected = ref(false)
@@ -54,11 +60,11 @@ onMounted(() => {
   
   ws.onopen = () => {
     connected.value = true
-    messages.value.push({ text: '✅ Connecté au serveur MarketHub !', type: 'system' })
+    messages.value.push({ text: `✅ Connecté — conversation avec ${vendeur.value}`, type: 'system' })
   }
 
   ws.onmessage = (e) => {
-    messages.value.push({ text: e.data, type: 'received' })
+    messages.value.push({ text: `${vendeur.value}: ${e.data.replace('📨 ', '')}`, type: 'received' })
     scrollToBottom()
   }
 
@@ -74,7 +80,7 @@ onUnmounted(() => {
 
 const sendMessage = () => {
   if (!newMessage.value.trim() || !ws) return
-  messages.value.push({ text: newMessage.value, type: 'sent' })
+  messages.value.push({ text: `Moi: ${newMessage.value}`, type: 'sent' })
   ws.send(newMessage.value)
   newMessage.value = ''
   scrollToBottom()
