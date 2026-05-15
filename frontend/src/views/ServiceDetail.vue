@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getServiceById } from '../services/api'
+import { getServiceById, createOrder } from '../services/api'
 import type { Service } from '../types/Service'
 
 const route = useRoute()
@@ -86,12 +86,18 @@ onMounted(async () => {
   service.value = res.data
 })
 
-const handleOrder = () => {
-  const token = localStorage.getItem('access_token')
+const handleOrder = async () => {
+  const token = localStorage.getItem('token')
   if (!token) {
     router.push('/login')
-  } else {
-    alert('Commande passée avec succès !')
+    return
+  }
+  try {
+    await createOrder(Number(route.params.id))
+    alert('✅ Commande passée avec succès !')
+    router.push('/dashboard')
+  } catch (e) {
+    alert('❌ Erreur lors de la commande')
   }
 }
 </script>
