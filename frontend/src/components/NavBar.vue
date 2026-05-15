@@ -12,6 +12,12 @@
         Catalogue
       </RouterLink>
 
+      <RouterLink to="/chat" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px;"
+        @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
+        @mouseleave="e => e.currentTarget.style.background='transparent'">
+        Chat
+      </RouterLink>
+
       <template v-if="isLoggedIn">
         <RouterLink to="/dashboard" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px;"
           @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
@@ -30,6 +36,7 @@
         </RouterLink>
       </template>
     </div>
+
   </nav>
 </template>
 
