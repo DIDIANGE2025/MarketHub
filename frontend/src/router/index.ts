@@ -12,6 +12,7 @@ const router = createRouter({
     { path: '/services/:id', component: () => import('@/views/ServiceDetail.vue') },
     { path: '/dashboard', component: () => import('@/views/DashboardView.vue') },
     { path: '/chat', component: () => import('@/views/ChatView.vue') },
+    { path: '/agent', component: () => import('@/views/AgentView.vue') },
   ]
 })
 
