@@ -1,0 +1,17 @@
+# Environment
+backend/.env
+backend/.env.local
+
+# Cache et logs
+backend/var/cache/
+backend/var/log/
+
+# Vendor
+backend/vendor/
+frontend/node_modules/
+
+# Docker
+backend/var/
+
+# JWT keys
+backend/config/jwt/
