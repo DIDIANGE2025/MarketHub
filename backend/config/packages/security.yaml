@@ -25,15 +25,10 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        public:
-            pattern: ^/api/(services|agent)
-            stateless: true
-            anonymous: true
-
         api:
             pattern: ^/api
             stateless: true
-            anonymous: false
+            anonymous: true
             provider: app_user_provider
             guard:
                 authenticators:
@@ -44,4 +39,4 @@ security:
         - { path: ^/api/services, roles: PUBLIC_ACCESS }
         - { path: ^/api/agent, roles: PUBLIC_ACCESS }
         - { path: ^/api/admin, roles: ROLE_ADMIN }
-        - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/api, roles: PUBLIC_ACCESS }
