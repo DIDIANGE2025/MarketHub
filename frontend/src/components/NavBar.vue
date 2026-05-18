@@ -25,11 +25,20 @@
       </RouterLink>
 
       <template v-if="isLoggedIn">
+
+        <RouterLink v-if="isAdmin" to="/admin"
+          style="color:white; text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px; background:linear-gradient(135deg,#4F46E5,#7C3AED);"
+          @mouseenter="e => e.currentTarget.style.opacity='0.85'"
+          @mouseleave="e => e.currentTarget.style.opacity='1'">
+          👑 Admin
+        </RouterLink>
+
         <RouterLink to="/dashboard" style="color:rgba(255,255,255,0.85); text-decoration:none; font-size:0.88rem; letter-spacing:1px; text-transform:uppercase; padding:0.4rem 0.75rem; border-radius:8px;"
           @mouseenter="e => e.currentTarget.style.background='rgba(255,255,255,0.15)'"
           @mouseleave="e => e.currentTarget.style.background='transparent'">
           Mon espace
         </RouterLink>
+
         <button @click="handleLogout"
           style="background:#ef4444; color:white; border:none; font-size:0.85rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:0.5rem 1.25rem; border-radius:8px; cursor:pointer;">
           Déconnexion
@@ -51,9 +60,20 @@ import { RouterLink, useRouter } from 'vue-router'
 
 const router = useRouter()
 const isLoggedIn = ref(false)
+const isAdmin = ref(false)
 
 const checkAuth = () => {
-  isLoggedIn.value = !!localStorage.getItem('token')
+  const token = localStorage.getItem('token')
+  isLoggedIn.value = !!token
+
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      isAdmin.value = payload.roles && payload.roles.includes('ROLE_ADMIN')
+    } catch {
+      isAdmin.value = false
+    }
+  }
 }
 
 onMounted(() => {
@@ -67,6 +87,7 @@ router.afterEach(() => {
 const handleLogout = () => {
   localStorage.removeItem('token')
   isLoggedIn.value = false
+  isAdmin.value = false
   router.push('/login')
 }
 </script>
