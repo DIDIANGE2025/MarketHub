@@ -1,54 +1,80 @@
 <template>
-  <main class="max-w-5xl mx-auto px-6 py-10">
-    <h1 class="text-2xl font-bold mb-8">Mon espace acheteur</h1>
+  <main style="max-width:900px; margin:0 auto; padding:2.5rem 1.5rem;">
+
+    <h1 style="color:white; font-size:1.8rem; font-weight:700; margin-bottom:2rem; text-shadow:0 2px 10px rgba(0,0,0,0.5);">
+      Mon espace acheteur
+    </h1>
 
     <!-- Stats -->
-    <div class="grid grid-cols-3 gap-6 mb-10">
-      <div class="border rounded-xl p-5 text-center shadow-sm">
-        <p class="text-3xl font-bold text-indigo-600">3</p>
-        <p class="text-gray-500 text-sm mt-1">Commandes totales</p>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;">
+      <div style="background:rgba(79,70,229,0.85); border-radius:14px; padding:1.5rem; text-align:center; backdrop-filter:blur(6px);">
+        <p style="font-size:2.2rem; font-weight:700; color:white;">{{ orders.length }}</p>
+        <p style="font-size:0.8rem; color:rgba(255,255,255,0.85); text-transform:uppercase; letter-spacing:1px; margin-top:0.3rem;">Commandes totales</p>
       </div>
-      <div class="border rounded-xl p-5 text-center shadow-sm">
-        <p class="text-3xl font-bold text-green-500">1</p>
-        <p class="text-gray-500 text-sm mt-1">En cours</p>
+      <div style="background:rgba(22,163,74,0.85); border-radius:14px; padding:1.5rem; text-align:center; backdrop-filter:blur(6px);">
+        <p style="font-size:2.2rem; font-weight:700; color:white;">{{ orders.filter(o => o.status === 'pending' || o.status === 'in_progress').length }}</p>
+        <p style="font-size:0.8rem; color:rgba(255,255,255,0.85); text-transform:uppercase; letter-spacing:1px; margin-top:0.3rem;">En cours</p>
       </div>
-      <div class="border rounded-xl p-5 text-center shadow-sm">
-        <p class="text-3xl font-bold text-gray-400">2</p>
-        <p class="text-gray-500 text-sm mt-1">Terminées</p>
+      <div style="background:rgba(30,30,30,0.75); border-radius:14px; padding:1.5rem; text-align:center; backdrop-filter:blur(6px);">
+        <p style="font-size:2.2rem; font-weight:700; color:white;">{{ orders.filter(o => o.status === 'completed').length }}</p>
+        <p style="font-size:0.8rem; color:rgba(255,255,255,0.85); text-transform:uppercase; letter-spacing:1px; margin-top:0.3rem;">Terminées</p>
       </div>
     </div>
 
     <!-- Commandes -->
-    <h2 class="text-xl font-bold mb-4">Mes commandes</h2>
-    <div class="space-y-4">
-      <div v-for="order in mockOrders" :key="order.id"
-        class="border rounded-xl p-5 flex justify-between items-center shadow-sm">
+    <h2 style="color:white; font-size:1.2rem; font-weight:600; margin-bottom:1rem; text-shadow:0 2px 8px rgba(0,0,0,0.5);">
+      Mes commandes
+    </h2>
+
+    <div v-if="orders.length === 0" style="background:rgba(255,255,255,0.9); border-radius:14px; padding:2rem; text-align:center; color:#666;">
+      Aucune commande pour le moment.
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:0.75rem;">
+      <div v-for="order in orders" :key="order.id"
+        style="background:rgba(255,255,255,0.95); border-radius:14px; padding:1.25rem 1.5rem; display:flex; justify-content:space-between; align-items:center; backdrop-filter:blur(6px);">
         <div>
-          <p class="font-semibold text-gray-800">{{ order.title }}</p>
-          <p class="text-gray-400 text-sm">{{ order.date }}</p>
+          <p style="font-weight:600; color:#111; font-size:1rem;">{{ order.service.title }}</p>
+          <p style="color:#888; font-size:0.82rem; margin-top:0.25rem;">{{ order.createdAt }}</p>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="font-bold text-gray-700">{{ order.price }} €</span>
-          <span :class="badgeClass(order.status)" class="px-3 py-1 rounded-full text-xs font-semibold">
-            {{ order.statusLabel }}
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <span style="font-weight:700; color:#111; font-size:1.05rem;">{{ order.total }} €</span>
+          <span :style="badgeStyle(order.status)" style="padding:0.35rem 0.9rem; border-radius:20px; font-size:0.78rem; font-weight:600;">
+            {{ statusLabel(order.status) }}
           </span>
         </div>
       </div>
     </div>
+
   </main>
 </template>
 
 <script setup lang="ts">
-const mockOrders = [
-  { id: 1, title: 'Cours JavaScript débutant', date: '2 mai 2026', price: 29, status: 'completed', statusLabel: 'Terminé' },
-  { id: 2, title: 'Design UI/UX Figma', date: '4 mai 2026', price: 49, status: 'in_progress', statusLabel: 'En cours' },
-  { id: 3, title: 'Rédaction SEO', date: '1 mai 2026', price: 35, status: 'completed', statusLabel: 'Terminé' },
-]
+import { ref, onMounted } from 'vue'
+import { getMyOrders } from '../services/api'
 
-const badgeClass = (status: string) => ({
-  'bg-green-100 text-green-700': status === 'completed',
-  'bg-blue-100 text-blue-700': status === 'in_progress',
-  'bg-yellow-100 text-yellow-700': status === 'pending',
-  'bg-red-100 text-red-700': status === 'cancelled',
+const orders = ref<any[]>([])
+
+onMounted(async () => {
+  try {
+    const res = await getMyOrders()
+    orders.value = res.data
+  } catch (e) {
+    console.error(e)
+  }
 })
+
+const badgeStyle = (status: string) => {
+  if (status === 'completed') return 'background:#dcfce7; color:#166534;'
+  if (status === 'pending') return 'background:#dbeafe; color:#1e40af;'
+  if (status === 'in_progress') return 'background:#dbeafe; color:#1e40af;'
+  return 'background:#fee2e2; color:#991b1b;'
+}
+
+const statusLabel = (status: string) => {
+  if (status === 'completed') return 'Terminé'
+  if (status === 'pending') return 'En cours'
+  if (status === 'in_progress') return 'En cours'
+  return 'Annulé'
+}
 </script>

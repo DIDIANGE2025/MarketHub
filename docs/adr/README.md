@@ -117,3 +117,65 @@ git push origin feature/ma-tache
 
 #### Créer une Pull Request
 Aller sur GitHub → Compare & pull request → Create pull request
+
+# MarketHub 🛍️
+
+> Marketplace de services entre étudiants — Projet B2 Full-Stack
+
+## Description
+
+MarketHub permet aux étudiants de proposer et acheter des services entre eux (cours, création de site, aide au déménagement...). L'application dispose d'une API REST sécurisée par JWT et d'un frontend Vue.js connecté en temps réel.
+
+## Stack technique
+
+- **Backend** : Symfony 5.4 (PHP 8.2) + Doctrine ORM + MySQL
+- **Frontend** : Vue.js 3 + TypeScript + Pinia + Tailwind CSS
+- **Auth** : JWT (LexikJWTAuthenticationBundle)
+- **BDD** : MySQL
+
+## Ce qui a été fait
+
+### Jour 1
+- Architecture du projet + ADR-001
+- Mise en place du repo GitHub + CI/CD GitHub Actions
+- Diagrammes UML (cas d'utilisation, classes, séquences)
+
+### Jour 2
+- Installation Symfony 5.4 + Doctrine ORM
+- 7 entités créées : User, Service, Order, Review, Message, Category, Notification
+- 7 tables générées en base MySQL
+- JWT configuré (RS256)
+- Endpoints fonctionnels :
+  - `POST /api/auth/register`
+  - `POST /api/auth/login`
+  - `GET /api/services`
+  - `POST /api/orders`
+  - `GET /api/orders/my`
+  - `POST /api/reviews`
+
+### Jour 3
+- Frontend Vue.js 3 initialisé (Vite + TypeScript + Pinia + Vue Router + Tailwind)
+- Pages : HomeView, LoginView, RegisterView, DashboardView, ServiceDetail
+- Connexion frontend ↔ backend (CORS configuré, JWT intégré)
+- Login fonctionnel depuis l'interface
+
+## Lancer le projet
+
+### Backend
+```bash
+cd backend
+composer install --ignore-platform-reqs
+php bin/console cache:clear
+php -S localhost:8000 -t public
+```
+
+### Frontend
+```bash
+cd frontend
+npm install --legacy-peer-deps
+npm run dev
+```
+
+## Accès
+- API : http://localhost:8000
+- Frontend : http://localhost:5173

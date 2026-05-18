@@ -1,0 +1,48 @@
+services:
+
+  database:
+    image: mysql:8.0
+    container_name: markethub_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: markethub
+      MYSQL_USER: markethub
+      MYSQL_PASSWORD: markethub
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - markethub_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: markethub_backend
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: mysql://markethub:markethub@database:3306/markethub
+      APP_ENV: dev
+    depends_on:
+      - database
+    networks:
+      - markethub_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: markethub_frontend
+    ports:
+      - "5174:5173"
+    networks:
+      - markethub_network
+
+networks:
+  markethub_network:
+    driver: bridge
+
+volumes:
+  db_data:
