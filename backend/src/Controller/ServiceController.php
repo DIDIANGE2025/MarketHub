@@ -76,7 +76,6 @@ class ServiceController extends AbstractController
             'seller' => [
                 'id' => $service->getSeller()->getId(),
                 'username' => $service->getSeller()->getUsername(),
-                'avatar' => $service->getSeller()->getAvatar(),
             ],
             'category' => $service->getCategory() ? [
                 'id' => $service->getCategory()->getId(),
@@ -114,5 +113,59 @@ class ServiceController extends AbstractController
             'message' => 'Service créé',
             'id' => $service->getId()
         ], 201);
+    }
+
+    #[Route('/{id}', name: 'service_update', methods: ['PUT'])]
+    public function update(int $id, Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $service = $em->getRepository(Service::class)->find($id);
+        if (!$service) {
+            return $this->json(['error' => 'Service non trouvé'], 404);
+        }
+
+        if ($service->getSeller()->getId() !== $this->getUser()->getId()) {
+            return $this->json(['error' => 'Accès refusé'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (isset($data['title'])) $service->setTitle($data['title']);
+        if (isset($data['description'])) $service->setDescription($data['description']);
+        if (isset($data['price'])) $service->setPrice($data['price']);
+        if (isset($data['status'])) $service->setStatus($data['status']);
+
+        if (isset($data['category_id'])) {
+            $category = $em->getRepository(Category::class)->find($data['category_id']);
+            if ($category) $service->setCategory($category);
+        }
+
+        $em->flush();
+
+        return $this->json([
+            'message' => 'Service mis à jour',
+            'id' => $service->getId()
+        ]);
+    }
+
+    #[Route('/{id}', name: 'service_delete', methods: ['DELETE'])]
+    public function delete(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $service = $em->getRepository(Service::class)->find($id);
+        if (!$service) {
+            return $this->json(['error' => 'Service non trouvé'], 404);
+        }
+
+        if ($service->getSeller()->getId() !== $this->getUser()->getId()) {
+            return $this->json(['error' => 'Accès refusé'], 403);
+        }
+
+        $em->remove($service);
+        $em->flush();
+
+        return $this->json(['message' => 'Service supprimé']);
     }
 }
