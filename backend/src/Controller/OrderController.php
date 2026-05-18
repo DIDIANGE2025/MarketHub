@@ -33,7 +33,6 @@ class OrderController extends AbstractController
         $order->setService($service);
         $order->setTotal($service->getPrice());
         $order->setStatus('pending');
-
         $em->persist($order);
         $em->flush();
 
@@ -49,7 +48,6 @@ class OrderController extends AbstractController
     public function myOrders(EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-
         $orders = $em->getRepository(Order::class)->findBy([
             'buyer' => $this->getUser()
         ]);
@@ -66,5 +64,29 @@ class OrderController extends AbstractController
         ], $orders);
 
         return $this->json($data);
+    }
+
+    #[Route('/{id}/cancel', name: 'order_cancel', methods: ['PUT'])]
+    public function cancel(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $order = $em->getRepository(Order::class)->find($id);
+        if (!$order) {
+            return $this->json(['error' => 'Commande non trouvée'], 404);
+        }
+
+        if ($order->getBuyer()->getId() !== $this->getUser()->getId()) {
+            return $this->json(['error' => 'Accès refusé'], 403);
+        }
+
+        if ($order->getStatus() === 'completed') {
+            return $this->json(['error' => 'Impossible d\'annuler une commande terminée'], 400);
+        }
+
+        $order->setStatus('cancelled');
+        $em->flush();
+
+        return $this->json(['message' => 'Commande annulée', 'id' => $order->getId()]);
     }
 }

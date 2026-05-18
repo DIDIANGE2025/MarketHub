@@ -1,4 +1,4 @@
-x<template>
+<template>
   <div style="max-width:1000px; margin:0 auto; padding:2rem 1.5rem;">
 
     <!-- DASHBOARD VENDEUR -->
@@ -131,10 +131,14 @@ x<template>
           </div>
           <div style="display:flex; align-items:center; gap:0.75rem;">
             <span style="font-weight:700; color:#111;">{{ order.total }} €</span>
-            <span :style="order.status === 'completed' ? 'background:#dcfce7; color:#166534;' : 'background:#dbeafe; color:#1e40af;'"
+            <span :style="order.status === 'completed' ? 'background:#dcfce7; color:#166534;' : order.status === 'cancelled' ? 'background:#fee2e2; color:#991b1b;' : 'background:#dbeafe; color:#1e40af;'"
               style="padding:0.3rem 0.75rem; border-radius:20px; font-size:0.78rem; font-weight:600;">
-              {{ order.status === 'completed' ? 'Terminé' : 'En cours' }}
+              {{ order.status === 'completed' ? 'Terminé' : order.status === 'cancelled' ? 'Annulé' : 'En cours' }}
             </span>
+            <button v-if="order.status === 'pending'" @click="annulerCommande(order.id)"
+              style="background:#fee2e2; color:#991b1b; border:none; padding:0.35rem 0.75rem; border-radius:8px; font-size:0.78rem; font-weight:600; cursor:pointer;">
+              Annuler
+            </button>
           </div>
         </div>
       </div>
@@ -206,5 +210,12 @@ const supprimerService = async (id: number) => {
   if (!confirm('Supprimer ce service ?')) return
   await axios.delete(`${BASE}/api/services/${id}`, { headers: getHeaders() })
   mesServices.value = mesServices.value.filter((s: any) => s.id !== id)
+}
+
+const annulerCommande = async (id: number) => {
+  if (!confirm('Annuler cette commande ?')) return
+  await axios.put(`${BASE}/api/orders/${id}/cancel`, {}, { headers: getHeaders() })
+  const order = orders.value.find((o: any) => o.id === id)
+  if (order) order.status = 'cancelled'
 }
 </script>
