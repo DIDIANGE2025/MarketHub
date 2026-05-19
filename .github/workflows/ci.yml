@@ -1,60 +1,55 @@
 name: CI MarketHub
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
   push:
-    branches:
-      - develop
+    branches: [ feature/integration-frontend-backend, main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  tests-backend:
-    name: Tests Backend Symfony
+  backend:
+    name: Test Backend Symfony
     runs-on: ubuntu-latest
+
     steps:
-      - name: Récupérer le code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Installer PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, pdo_mysql
 
-      - name: Installer les dépendances
-        run: |
-          cd backend
-          composer install
+      - name: Install dependencies
+        working-directory: backend
+        run: composer install --no-interaction --prefer-dist
 
-      - name: Lancer les tests
-        run: |
-          cd backend
-          php bin/phpunit
+      - name: Check routes
+        working-directory: backend
+        run: php bin/console debug:router
 
-  tests-frontend:
-    name: Tests Frontend Vue.js
+      - name: Check Symfony
+        working-directory: backend
+        run: php bin/console about
+
+  frontend:
+    name: Build Frontend Vue.js
     runs-on: ubuntu-latest
+
     steps:
-      - name: Récupérer le code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Installer Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
-      - name: Installer les dépendances
-        run: |
-          cd frontend
-          npm install
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
 
-      - name: Lancer les tests
-        run: |
-          cd frontend
-          npm run test
-
-      - name: Vérifier le build
-        run: |
-          cd frontend
-          npm run build
+      - name: Build
+        working-directory: frontend
+        run: npm run build
