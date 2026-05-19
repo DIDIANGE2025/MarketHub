@@ -14,6 +14,7 @@ const router = createRouter({
     { path: '/chat', component: () => import('@/views/ChatView.vue') },
     { path: '/agent', component: () => import('@/views/AgentView.vue') },
     { path: '/admin', component: () => import('@/views/AdminView.vue') },
+    { path: '/swagger', component: () => import('@/views/SwaggerView.vue') },
   ]
 })
 

@@ -1,181 +1,160 @@
-# MarketHub — Marketplace de services entre étudiants
+# MarketHub 🎓
 
-## Présentation
-MarketHub est une marketplace complète où les étudiants 
-peuvent proposer et acheter des services : cours particuliers, 
-développement, design, rédaction.
+> Marketplace étudiante — Des services par des étudiants, pour des étudiants.
+
+## Description
+
+MarketHub est une plateforme full-stack permettant aux étudiants de proposer et acheter des services entre eux. Elle intègre une authentification JWT, un système de messagerie temps réel via WebSocket, et un agent IA conseiller.
 
 ## Équipe
+
 | Membre | Rôle |
-|---|---|
-| Alphonse | Chef de projet / Backend Symfony |
+|--------|------|
+| Alphonse | Chef de projet / Backend / DevOps |
 | Elisabeth | Développeur Frontend Vue.js |
 | Dovane | Développeur Full-stack / WebSocket |
 
 ## Stack technique
+
 | Couche | Technologie |
-|---|---|
-| Backend | Symfony PHP + API Platform |
-| Frontend | Vue.js + TypeScript + Tailwind CSS |
-| Base de données | MySQL + Doctrine ORM |
-| Messagerie | WebSocket Ratchet |
-| Auth | JWT + Refresh Token |
-| DevOps | Docker + GitHub Actions |
-| Tests | PHPUnit + Cypress |
+|--------|-------------|
+| Frontend | Vue.js 3 + TypeScript + Pinia + Tailwind CSS |
+| Backend | Symfony 6 + PHP 8.2 + API REST |
+| Base de données | MySQL 8 |
+| Authentification | JWT (Lexik Bundle) |
+| Temps réel | WebSocket natif PHP |
+| DevOps | Docker Compose |
 
-## Fonctionnalités principales
-- Recherche full-text avec filtres combinés
-- Profils vendeur et acheteur
-- Messagerie temps réel WebSocket
-- Système d'avis et notes
-- Panier et checkout
-- Dashboard admin
-- Paiement simulé sécurisé
+## Prérequis
 
-## Structure du projet
-MarketHub/
-├── backend/          ← Symfony PHP
-├── frontend/         ← Vue.js TypeScript
-├── docs/
-│   ├── uml/          ← Diagrammes draw.io
-│   ├── wireframes/   ← Maquettes
-│   └── adr/          ← Décisions techniques
-├── AI_JOURNAL.md     ← Journal IA
-├── docker-compose.yml
-└── README.md
+- PHP 8.2+
+- Node.js 20+
+- Composer
+- Symfony CLI
+- XAMPP (MySQL)
 
 ## Installation
-### Prérequis
-- Docker + Docker Compose
-- Node.js 18+
-- PHP 8.2+
 
-### Lancer le projet
-git clone https://github.com/votre-repo/markethub
-cd markethub
-docker-compose up -d
+### 1 — Cloner le projet
 
-## Équipe et responsabilités
-- Alphonse : Backend API + BDD + CI/CD
-- Elisabeth : Frontend Vue.js + UI/UX
-- Dovane : WebSocket + Dashboard Admin
+```bash
+git clone https://github.com/DIDIANGE2025/MarketHub.git
+cd MarketHub
+```
+
+### 2 — Backend
+
+```bash
+cd backend
+composer install
+cp .env.example .env
+# Configurer DATABASE_URL dans .env
+php bin/console doctrine:migrations:migrate
+```
+
+### 3 — Frontend
+
+```bash
+cd ../frontend
+npm install
+```
+
+## Lancer le projet
+
+**Terminal 1 — Backend :**
+```bash
+cd backend
+symfony serve --no-tls
+```
+
+**Terminal 2 — WebSocket :**
+```bash
+cd backend
+php bin/console app:websocket-server
+```
+
+**Terminal 3 — Frontend :**
+```bash
+cd frontend
+npm run dev
+```
+
+Ouvrir : http://localhost:5173
+
+## Comptes de test
+
+| Rôle | Email | Mot de passe |
+|------|-------|-------------|
+| Acheteur | testuser@test.com | test1234 |
+| Vendeur | vendeur@markethub.com | vendeur1234 |
+| Admin | admin@markethub.com | admin1234 |
+
+## Fonctionnalités
+
+- ✅ Inscription / Connexion avec JWT
+- ✅ Catalogue de services avec filtres
+- ✅ Commande de services
+- ✅ Dashboard acheteur — voir et annuler ses commandes
+- ✅ Dashboard vendeur — CRUD complet de ses services
+- ✅ Panel admin — gérer utilisateurs, services et commandes
+- ✅ Messagerie temps réel (WebSocket)
+- ✅ Agent IA — conseiller, générateur de description, matching
+
+## API Endpoints
+
+| Méthode | Endpoint | Description | Auth |
+|---------|----------|-------------|------|
+| POST | /api/auth/register | Inscription | Non |
+| POST | /api/auth/login | Connexion | Non |
+| GET | /api/services | Liste des services | Non |
+| GET | /api/services/{id} | Détail service | Non |
+| POST | /api/services | Créer service | Oui |
+| PUT | /api/services/{id} | Modifier service | Oui |
+| DELETE | /api/services/{id} | Supprimer service | Oui |
+| POST | /api/orders | Passer commande | Oui |
+| GET | /api/orders/my | Mes commandes | Oui |
+| PUT | /api/orders/{id}/cancel | Annuler commande | Oui |
+| POST | /api/agent/conseiller | Agent conseiller | Non |
+| POST | /api/agent/description | Générateur description | Non |
+| POST | /api/agent/matching | Matching services | Non |
+| GET | /api/admin/stats | Statistiques | Admin |
+| GET | /api/admin/users | Tous les users | Admin |
+| DELETE | /api/admin/users/{id} | Supprimer user | Admin |
+| GET | /api/admin/services | Tous les services | Admin |
+| DELETE | /api/admin/services/{id} | Supprimer service | Admin |
+| GET | /api/admin/orders | Toutes les commandes | Admin |
+
+## Architecture
+
+MarketHub/
+├── frontend/          # Vue.js 3
+│   ├── src/
+│   │   ├── views/     # Pages
+│   │   ├── components/# Composants
+│   │   ├── stores/    # Pinia
+│   │   ├── services/  # API calls
+│   │   └── router/    # Routes
+├── backend/           # Symfony 6
+│   ├── src/
+│   │   ├── Controller/# API Controllers
+│   │   ├── Entity/    # Doctrine ORM
+│   │   └── Command/   # WebSocket
+│   └── config/        # Configuration
+└── docker-compose.yml # Docker
+
 
 ## Conventions Git
+
 - Branches : feature/nom, develop, main
 - Commits : feat:, fix:, docs:, test:
 - PR obligatoire avant merge sur develop
 
-## Documentation
-- Diagrammes UML → docs/uml/
-- Wireframes → docs/wireframes/
-- ADR Choix techniques → docs/adr/ADR-001.md
-- Journal IA → AI_JOURNAL.md
-## Protection du projet — Git & CI/CD
+## Utilisation de l'IA
 
-### Structure des branches
-- `main` — production, toujours stable
-- `develop` — intégration quotidienne
-- `feature/nom` — chacun travaille ici
+Ce projet a été développé avec l'assistance de Claude (Anthropic) pour :
+- Débogage des problèmes JWT et cache Symfony
+- Implémentation du WebSocket natif PHP
+- Création des composants Vue.js
+- Configuration Docker
 
-### Règles de protection
-- Personne ne peut pousser directement sur `main`
-- Toute modification passe obligatoirement par une Pull Request
-- La validation d'Alphonse est requise avant tout merge
-- Les tests automatiques doivent passer avant le merge
-
-### Flux de travail quotidien
-1. Créer sa branche feature
-2. Coder et pousser sur sa branche
-3. Créer une Pull Request vers develop
-4. Pipeline CI/CD lance les tests automatiquement
-5. Alphonse review et valide
-6. Merge en sécurité
-
-### Pipeline CI/CD — GitHub Actions
-À chaque Pull Request le pipeline vérifie :
-- Tests backend PHPUnit
-- Tests frontend Vue.js
-- Build de l'application
-
-Si un test échoue → PR bloquée automatiquement
-
-### Commandes quotidiennes
-
-#### Démarrer sa journée
-```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/ma-tache
-```
-
-#### Sauvegarder son travail
-```bash
-git add .
-git commit -m "feat: description de ce que j'ai fait"
-git push origin feature/ma-tache
-```
-
-#### Créer une Pull Request
-Aller sur GitHub → Compare & pull request → Create pull request
-
-# MarketHub 🛍️
-
-> Marketplace de services entre étudiants — Projet B2 Full-Stack
-
-## Description
-
-MarketHub permet aux étudiants de proposer et acheter des services entre eux (cours, création de site, aide au déménagement...). L'application dispose d'une API REST sécurisée par JWT et d'un frontend Vue.js connecté en temps réel.
-
-## Stack technique
-
-- **Backend** : Symfony 5.4 (PHP 8.2) + Doctrine ORM + MySQL
-- **Frontend** : Vue.js 3 + TypeScript + Pinia + Tailwind CSS
-- **Auth** : JWT (LexikJWTAuthenticationBundle)
-- **BDD** : MySQL
-
-## Ce qui a été fait
-
-### Jour 1
-- Architecture du projet + ADR-001
-- Mise en place du repo GitHub + CI/CD GitHub Actions
-- Diagrammes UML (cas d'utilisation, classes, séquences)
-
-### Jour 2
-- Installation Symfony 5.4 + Doctrine ORM
-- 7 entités créées : User, Service, Order, Review, Message, Category, Notification
-- 7 tables générées en base MySQL
-- JWT configuré (RS256)
-- Endpoints fonctionnels :
-  - `POST /api/auth/register`
-  - `POST /api/auth/login`
-  - `GET /api/services`
-  - `POST /api/orders`
-  - `GET /api/orders/my`
-  - `POST /api/reviews`
-
-### Jour 3
-- Frontend Vue.js 3 initialisé (Vite + TypeScript + Pinia + Vue Router + Tailwind)
-- Pages : HomeView, LoginView, RegisterView, DashboardView, ServiceDetail
-- Connexion frontend ↔ backend (CORS configuré, JWT intégré)
-- Login fonctionnel depuis l'interface
-
-## Lancer le projet
-
-### Backend
-```bash
-cd backend
-composer install --ignore-platform-reqs
-php bin/console cache:clear
-php -S localhost:8000 -t public
-```
-
-### Frontend
-```bash
-cd frontend
-npm install --legacy-peer-deps
-npm run dev
-```
-
-## Accès
-- API : http://localhost:8000
-- Frontend : http://localhost:5173
+Journal complet disponible dans `docs/Journal_IA.pdf
