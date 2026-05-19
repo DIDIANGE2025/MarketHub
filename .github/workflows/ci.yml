@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: backend
-        run: composer install --no-interaction --prefer-dist
+        run: composer install --no-interaction --prefer-dist --ignore-platform-reqs
 
       - name: Check routes
         working-directory: backend
