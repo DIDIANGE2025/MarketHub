@@ -21,17 +21,28 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, xml, ctype, iconv, pdo_mysql
 
+      - name: Create .env file
+        working-directory: backend
+        run: |
+          echo "APP_ENV=test" > .env
+          echo "APP_SECRET=testsecret123456789012345678901" >> .env
+          echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/test.db" >> .env
+          echo "JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem" >> .env
+          echo "JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem" >> .env
+          echo "JWT_PASSPHRASE=" >> .env
+          echo "ANTHROPIC_API_KEY=test" >> .env
+
       - name: Install dependencies
         working-directory: backend
         run: composer install --no-interaction --prefer-dist --ignore-platform-reqs
 
       - name: Check routes
         working-directory: backend
-        run: php bin/console debug:router
+        run: php bin/console debug:router --env=test
 
       - name: Check Symfony
         working-directory: backend
-        run: php bin/console about
+        run: php bin/console about --env=test
 
   frontend:
     name: Build Frontend Vue.js
