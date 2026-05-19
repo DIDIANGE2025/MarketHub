@@ -63,4 +63,4 @@ jobs:
 
       - name: Build
         working-directory: frontend
-        run: npm run build
+        run: npx --yes vite build
